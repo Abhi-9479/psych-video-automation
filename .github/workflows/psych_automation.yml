@@ -1,0 +1,146 @@
+name: Psychology Facts Video Automation
+
+on:
+  schedule:
+    # Run every day at 9:00 AM IST (3:30 AM UTC)
+    - cron: '30 3 * * *'
+  
+  # Allow manual triggering from GitHub UI
+  workflow_dispatch:
+
+jobs:
+  generate-psych-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    permissions:
+      contents: write
+      
+    steps:
+    # Step 1: Checkout the repository code
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v4
+    
+    # Step 2: Download media from the release
+    - name: 📥 Download Media Assets from Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.WORKFLOW_PAT }}
+      run: |
+        echo "Creating media directories..."
+        mkdir -p psych_temp
+        mkdir -p psych_music
+        
+        # Function to download files safely
+        download_file() {
+          local url="$1"; local output="$2"
+          echo "Downloading: $output"
+          if curl -L --fail -H "Authorization: Bearer $GITHUB_TOKEN" -o "$output" "$url"; then
+            echo "✅ Successfully downloaded $output"
+          else
+            echo "❌ Failed to download $output"; exit 1
+          fi
+        }
+
+        echo "Downloading video templates..."
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/beach_bright_beach.mp4.mp4" "psych_temp/beach_bright_beach.mp4.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Blue_Sea.mp4" "psych_temp/Blue_Sea.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/butterflies.mp4" "psych_temp/butterflies.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/dawn.mp4" "psych_temp/dawn.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/forest.mp4" "psych_temp/forest.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/icea.mp4" "psych_temp/icea.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/jellyfish.mp4" "psych_temp/jellyfish.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/mountains.mp4" "psych_temp/mountains.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Orange_Good_Morning.mp4" "psych_temp/Orange_Good_Morning.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/pool.mp4" "psych_temp/pool.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/roadtrip.mp4" "psych_temp/roadtrip.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/sad_rain.mp4" "psych_temp/sad_rain.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/seagull.mp4" "psych_temp/seagull.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/senet.mp4" "psych_temp/senet.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/sunflower.mp4" "psych_temp/sunflower.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Sunset.mp4" "psych_temp/Sunset.mp4"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Yellow_sea.mp4" "psych_temp/Yellow_sea.mp4"
+
+        echo "Downloading music files..."
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Big_10_TrackTribe.mp3" "psych_music/Big_10_TrackTribe.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Cartier_Anno_Domini.mp3" "psych_music/Cartier_Anno_Domini.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/HITR.mp3" "psych_music/HITR.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/IDFC_Naruto.mp3" "psych_music/IDFC_Naruto.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/man_sigma.mp3" "psych_music/man_sigma.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Mission_edit.mp3" "psych_music/Mission_edit.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/nocopyright_bgm.mp3" "psych_music/nocopyright_bgm.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Red_Anno_Domini.mp3" "psych_music/Red_Anno_Domini.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Sacrifices_edit_12sec.mp3" "psych_music/Sacrifices_edit_12sec.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Shy_people.mp3" "psych_music/Shy_people.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/soft_bgm.mp3" "psych_music/soft_bgm.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Steps_ad.mp3" "psych_music/Steps_ad.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/Talk_ad.mp3" "psych_music/Talk_ad.mp3"
+        download_file "https://github.com/Abhi-9479/psych-video-automation/releases/download/v1.0-assets/whoosh.mp3" "psych_music/whoosh.mp3"
+
+    # Step 3: Set up Python
+    - name: 🐍 Set up Python 3.12.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12.10'
+    
+    # Step 4: Install Custom Fonts
+    - name: 🔤 Install Custom Fonts
+      run: |
+        sudo mkdir -p /usr/share/fonts/truetype/custom
+        sudo cp fonts/ARLRDBD.TTF /usr/share/fonts/truetype/custom/
+        sudo fc-cache -f -v
+
+    # Step 5: Install system dependencies
+    - name: 📦 Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y imagemagick ffmpeg libjpeg-dev zlib1g-dev
+        sudo sed -i 's/rights="none"/rights="read,write"/g' /etc/ImageMagick-6/policy.xml
+    
+    # Step 6: Install Python dependencies
+    - name: 🔧 Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install -r requirements.txt
+    
+    # Step 7: Create credential and environment files
+    - name: 🔐 Create credentials files from secrets
+      run: |
+        echo '${{ secrets.GOOGLE_CREDENTIALS }}' > credentials.json
+        echo '${{ secrets.CLIENT_SECRETS }}' > client_secrets.json
+        echo '${{ secrets.TOKEN_PICKLE_BASE64 }}' | base64 -d > token.pickle
+    - name: 🌍 Create environment file
+      run: |
+        echo "GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}" > .env
+    
+    # Step 8: Run your main Python script
+    - name: 🚀 Generate and upload psychology video
+      run: |
+        python psych_git.py
+      env:
+        GITHUB_ACTIONS: true
+        PYTHONPATH: ${{ github.workspace }}
+
+    # Step 9: Commit the updated index file back to the repository
+    - name: 💾 Commit and push last video index
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add psych_temp/last_video_index.txt
+        git diff-index --quiet HEAD || git commit -m "Update last used video index"
+        git push
+        
+    # Step 10: Save the final video as a temporary artifact
+    - name: 💾 Save generated video as artifact (optional backup)
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: psych-video-${{ github.run_number }}
+        path: "quote_*.mp4"
+        retention-days: 7
+    
+    # Step 11: Notify on failure
+    - name: 📧 Notify on failure
+      if: failure()
+      run: |
+        echo "❌ Psychology video automation failed!"
+        echo "Check the logs above for details."
